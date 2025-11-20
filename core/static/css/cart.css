@@ -1,0 +1,84 @@
+.animate-left {
+    animation: slideLeft 0.7s ease forwards;
+    opacity: 0;
+}
+
+.animate-right {
+    animation: slideRight 0.7s ease forwards;
+    opacity: 0;
+}
+
+@keyframes slideLeft {
+    from { transform: translateX(-40px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+    from { transform: translateX(40px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+
+.lift-hover {
+    transition: 0.3s ease;
+}
+.lift-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+}
+
+.cart-img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.quantity {
+    width: 70px !important;
+}
+
+#quantityInput,
+#quantityInput:focus,
+#quantityInput:active,
+.quantity input.form-control,
+.quantity input.form-control:focus {
+    border: 2px solid #28a745 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: #f6f6f6 !important;
+    border-radius: 14px !important;
+}
+.btnbuy
+{
+     background: linear-gradient(120deg, #e9fbe3, #d6f7cf) !important;
+}
+.cart-summary {
+    border-radius: 20px;
+    border: 2px solid #d6f7cf;
+    /* background: linear-gradient(120deg, #fde8e3, #f9d7d1); */
+}
+.cart-card {
+    background: linear-gradient(120deg, #e9fbe3, #d6f7cf);
+    border: 1px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+.cart-heading {
+    font-size: 2.2rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    color: #d82215;
+    opacity: 0;
+    animation: fadeDown 0.7s ease forwards, shimmerGlow 3s infinite ease-in-out;
+}
+
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmerGlow {
+    0%   { text-shadow: 0 0 0 rgba(255,200,90,0); }
+    50%  { text-shadow: 0 0 18px rgba(255,200,90,0.5); }
+    100% { text-shadow: 0 0 0 rgba(255,200,90,0); }
+}

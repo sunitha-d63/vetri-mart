@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %} {% load static %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}" />
+{% endblock %} {% block content %}
+<div class="container my-5 product-detail-container">
+  <div class="row product-detail-row">
+    <div class="col-md-6 product-image-box position-relative">
+      <img
+        src="{{ product.image.url }}"
+        class="img-fluid product-image"
+        alt="{{ product.title }}"
+      />
+
+      <div class="thumbnail-row mt-3 d-flex gap-2 flex-wrap">
+        <img src="{{ product.image.url }}" class="thumbnail-img active-thumb" />
+
+        {% if product.image2 %}
+        <img src="{{ product.image2.url }}" class="thumbnail-img" />
+        {% endif %} {% if product.image3 %}
+        <img src="{{ product.image3.url }}" class="thumbnail-img" />
+        {% endif %}
+      </div>
+    </div>
+
+    <div
+      class="col-md-6 product-content-box d-flex flex-column justify-content-between">
+      <div>
+        <p class="text-muted fw-semibold">{{ product.category.name }}</p>
+        <h1 class="mb-3 title texttitle">{{ product.title|upper }}</h1>
+
+        <div class="price-section mb-4">
+          <input
+            type="hidden"
+            id="basePrice"
+            value="{{ product.base_price }}"
+          />
+          <input
+            type="hidden"
+            id="discountPrice"
+            value="{{ product.discounted_price }}"
+          />
+          <input type="hidden" id="productUnit" value="{{ product.unit }}" />
+          <input
+            type="hidden"
+            id="isOfferActive"
+            value="{% if product.is_offer_active %}True{% else %}False{% endif %}"
+          />
+
+          <h2
+            class="fw-bold mb-1 {% if product.is_offer_active %}text-danger{% endif %}"
+            id="livePrice"
+          >
+            {% if product.is_offer_active %} ₹{{
+            product.discounted_price|floatformat:2 }} {% else %} ₹{{
+            product.base_price|floatformat:2 }} {% endif %}
+          </h2>
+
+          {% if product.is_offer_active %}
+          <p class="text-success fw-semibold mb-1">
+            You save ₹{{ product.savings_amount|floatformat:2 }} ({{product.discount_percent }}% OFF)
+          </p>
+          <small class="text-muted text-decoration-line-through">
+            MRP: ₹{{ product.base_price|floatformat:2 }} / {{ product.unit }}
+          </small>
+          {% else %}
+          <p class="text-muted small mb-0">
+            ₹{{ product.base_price|floatformat:2 }} / {{ product.unit }}
+          </p>
+          {% endif %}
+        </div>
+        <form method="POST" action="{% url 'add_to_cart' product.id %}">
+    {% csrf_token %}
+    
+    <input type="hidden" name="weight" id="selectedWeight">
+
+    <div class="d-flex gap-3 mb-4">
+        <div class="flex-grow-1 weight-wrapper">
+            <label class="form-label mb-1">Weight:</label>
+
+            <div class="custom-dropdown" id="weightSelector">
+                <span id="selectedWeightText">{{ weight_options.0 }}</span>
+                <span class="dropdown-arrow">▼</span>
+            </div>
+
+            <ul class="custom-dropdown-list d-none" id="weightDropdown">
+                {% for w in weight_options %}
+                    <li data-value="{{ w }}">{{ w }}</li>
+                {% endfor %}
+            </ul>
+
+            <select name="weight" id="selectedWeight" hidden>
+                {% for w in weight_options %}
+                    <option value="{{ w }}">{{ w }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="form-label mb-1">Qty:</label>
+            <div class="input-group input-group-sm">
+                <input type="number" name="quantity" id="quantityInput" class="form-control text-center" value="1" min="1">
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-3">
+        <button type="submit" name="add_to_cart" class="btn btn-outline-dark flex-grow-1">
+            ADD TO CART
+        </button>
+        <button type="submit" name="buy_now" class="btn btn-dark flex-grow-1">
+            BUY NOW
+        </button>
+    </div>
+</form>
+
+      </div>
+    </div>
+  </div>
+</div>
+ <div class="row mt-5 related-wrapper">
+  <h5 class="mb-4 text-center fs-3">Related Products</h5>
+
+  {% for prod in related_products %}
+  <div class="col-md-6 mb-4">
+    <div class="related-card">
+      <a href="{{ prod.get_absolute_url }}">
+        <img
+          src="{{ prod.image.url }}"
+          class="card-img-top"
+          alt="{{ prod.title }}"
+        />
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="{% static 'js/product_detail.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+  <div class="login-box">
+    <h2 class="mb-4 text-center">Login</h2>
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="POST" novalidate>
+      {% csrf_token %}
+
+      <!-- 🔥 UPDATED: identifier field -->
+      <div class="mb-3">
+        <label for="{{ form.identifier.id_for_label }}">Username or Email:</label>
+        {{ form.identifier }}
+        {% for error in form.identifier.errors %}
+        <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        {{ form.password.label_tag }}
+        {{ form.password }}
+        {% for error in form.password.errors %}
+        <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="text-end mb-2">
+        <a href="{% url 'forgot_password' %}" class="text-black" style="font-size: 14px">
+          Forgot Password?
+        </a>
+      </div>
+
+      <input type="hidden" name="next" value="{{ next }}" />
+      <button type="submit" class="btn bg-warning w-100">Login</button>
+    </form>
+
+    <p class="text-center mt-3">
+      Don't have an account?
+      <a class="text-black fs-6" href="{% url 'register' %}">Register</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Your custom JS unchanged
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("select").forEach(function (selectElement) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "custom-select-wrapper";
+
+      const display = document.createElement("div");
+      display.className = "custom-select-display";
+      display.innerText =
+        selectElement.options[selectElement.selectedIndex].text;
+
+      const optionBox = document.createElement("div");
+      optionBox.className = "custom-select-options";
+
+      Array.from(selectElement.options).forEach((option) => {
+        const opt = document.createElement("div");
+        opt.className = "custom-select-option";
+        opt.innerText = option.text;
+        opt.dataset.value = option.value;
+
+        if (option.selected) opt.classList.add("selected");
+
+        opt.onclick = () => {
+          selectElement.value = opt.dataset.value;
+          display.innerText = opt.innerText;
+          optionBox.style.display = "none";
+          optionBox
+            .querySelectorAll("div")
+            .forEach((o) => o.classList.remove("selected"));
+          opt.classList.add("selected");
+        };
+
+        optionBox.appendChild(opt);
+      });
+
+      display.onclick = () => {
+        optionBox.style.display =
+          optionBox.style.display === "block" ? "none" : "block";
+      };
+
+      selectElement.style.display = "none";
+
+      selectElement.parentNode.insertBefore(wrapper, selectElement);
+      wrapper.appendChild(selectElement);
+      wrapper.appendChild(display);
+      wrapper.appendChild(optionBox);
+    });
+  });
+</script>
+{% endblock %}
