@@ -1,70 +1,104 @@
 {% extends 'core/base.html' %}
 {% load static %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/search.css' %}">
 {% endblock %}
+
 {% block content %}
 <div class="container my-5">
 
-<h2 class="search-heading text-center mb-5">
-  {% if query %}
-    Results for "<span class="result-text">{{ query }}</span>"
-  {% else %}
-    Search Products
-  {% endif %}
-</h2>
+    <h2 class="search-heading text-center mb-5">
+        {% if query %}
+            Results for "<span class="result-text">{{ query }}</span>"
+        {% else %}
+            Search Products
+        {% endif %}
+    </h2>
 
-  {% if products %}
-  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% if products %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
 
-    {% for product in products %}
-    <div class="col">
-      <div class="search-card shadow-sm border-0 position-relative">
-        <form action="{% url 'toggle_wishlist' product.id %}" method="post"
-              class="position-absolute top-0 end-0 m-2">
-          {% csrf_token %}
-          <button type="submit" class="wishlist-btn">
-            {% if product.in_wishlist %} ❤️ {% else %} 🤍 {% endif %}
-          </button>
-        </form>
+            {% for product in products %}
+            <div class="col">
+                <div class="search-card shadow-sm border-0 position-relative">
 
-        <!-- 🖼 Image -->
-        <a href="{{ product.get_absolute_url }}">
-          <img src="{{ product.image.url }}" class="search-img" alt="{{ product.title }}">
-        </a>
+                    <form action="{% url 'toggle_wishlist' product.id %}" method="post"
+                          class="position-absolute top-0 end-0 m-2">
+                        {% csrf_token %}
+                        <button type="submit" class="wishlist-btn">
+                            {% if product.in_wishlist %} ❤️ {% else %} 🤍 {% endif %}
+                        </button>
+                    </form>
 
-        <!-- 📦 Content -->
-        <div class="p-3 text-center">
-          <h5 class="fw-bold text-uppercase mb-1">{{ product.title }}</h5>
+                    <a href="{{ product.get_absolute_url }}">
+                        <img src="{{ product.image.url }}" class="search-img" alt="{{ product.title }}">
+                    </a>
 
-          {% if product.is_offer_active %}
-            <p class="mb-1">
-              <span class="text-muted text-decoration-line-through me-2">₹{{ product.base_price }}</span>
-              <span class="text-danger fw-bold">₹{{ product.discounted_price }}</span>
-            </p>
-            <p class="small text-success mb-0">
-              You save ₹{{ product.savings_amount }} ({{ product.discount_percent }}% OFF)
-            </p>
-          {% else %}
-            <p class="fw-semibold mb-0 text-secondary">₹{{ product.base_price }} PER KG</p>
-          {% endif %}
+                    <div class="p-3 text-center">
+                        <h5 class="fw-bold text-uppercase mb-1">{{ product.title }}</h5>
+
+                        <div class="price-box">
+
+                            {% if product.is_offer_active %}
+                                <p class="fw-semibold text-secondary mb-1">
+                                    <span class="text-muted text-decoration-line-through me-2">
+                                        ₹{{ product.base_price|floatformat:2 }}
+                                    </span>
+
+                                    <span class="text-danger fw-bold">
+                                        ₹{{ product.discounted_price|floatformat:2 }}
+                                    </span>
+
+                                    {% if product.unit == "piece" %}
+                                        <span class="small">per pc</span>
+                                    {% elif product.unit == "pack" %}
+                                        <span class="small">per pack</span>
+                                    {% elif product.unit == "dozen" %}
+                                        <span class="small">per dozen</span>
+                                    {% else %}
+                                        <span class="small">/ {{ product.unit }}</span>
+                                    {% endif %}
+                                </p>
+                                <p class="small text-success mb-0">
+                                    You save ₹{{ product.savings_amount }} ({{ product.discount_percent }}% OFF)
+                                </p>
+
+                            {% else %}
+                                <p class="fw-semibold text-secondary mb-1">
+                                    ₹{{ product.base_price|floatformat:2 }}
+
+                                    {% if product.unit == "piece" %}
+                                        <span class="small">per pc</span>
+                                    {% elif product.unit == "pack" %}
+                                        <span class="small">per pack</span>
+                                    {% elif product.unit == "dozen" %}
+                                        <span class="small">per dozen</span>
+                                    {% else %}
+                                        <span class="small">/ {{ product.unit }}</span>
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
         </div>
 
-      </div>
-    </div>
-    {% endfor %}
-
-  </div>
-
-  {% else %}
-  <div class="alert alert-warning text-center mt-5 shadow-sm">
-    {% if query %}
-      No products found for "<strong>{{ query }}</strong>"
     {% else %}
-      Start typing in the search box above 🔍
+
+        <div class="alert alert-warning text-center mt-5 shadow-sm">
+            {% if query %}
+                No products found for "<strong>{{ query }}</strong>"
+            {% else %}
+                Start typing in the search box above 🔍
+            {% endif %}
+        </div>
     {% endif %}
-  </div>
-  {% endif %}
 
 </div>
 {% endblock %}

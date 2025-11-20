@@ -5,11 +5,12 @@
     overflow: hidden;
     background: #fff;
     transition: 0.3s ease;
-    padding-bottom: 10px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .search-card:hover {
-    transform: translateY(-6px);
     box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
@@ -18,12 +19,21 @@
     height: 260px;
     object-fit: cover;
     border-bottom: 1px solid #eee;
-    transition: 0.3s ease;
 }
 
-.search-card:hover .search-img {
-    transform: scale(1.06);
+.search-card .p-3 {
+    flex-grow: 1;    
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
+
+.search-card .p-3 p {
+    margin-top: auto;
+}
+
+
+
 
 .wishlist-btn {
     background: rgba(255,255,255,0.9);
